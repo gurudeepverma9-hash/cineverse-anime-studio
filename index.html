@@ -1,0 +1,299 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#09090d">
+<title>CineVerse Anime Studio</title>
+<style>
+:root{--bg:#09090d;--panel:#14141c;--line:#2a2a38;--text:#f4f1f7;--muted:#a5a1b2;--violet:#9c75ff}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 80% -10%,#34204b 0,transparent 38%),var(--bg);color:var(--text);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:90px}
+header{padding:calc(18px + env(safe-area-inset-top)) 18px 16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#09090def;backdrop-filter:blur(16px);z-index:5}
+.brand{display:flex;align-items:center;gap:12px}
+.mark{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#ff9b43,#8c4eff);display:grid;place-items:center;font-size:22px}
+.brand h1{font-size:17px;letter-spacing:1.5px;margin:0}
+.brand small{color:var(--muted);font-size:11px;letter-spacing:2px}
+main{max-width:760px;margin:auto;padding:18px 14px}
+.hero{padding:20px;border:1px solid #513b6b;border-radius:22px;background:linear-gradient(125deg,#261b35,#171722 60%,#2c1c20);margin-bottom:18px}
+.eyebrow{color:#ffb36e;font-size:11px;letter-spacing:2px;font-weight:800}
+.hero h2{font-size:27px;line-height:1.1;margin:9px 0}
+.hero p{color:#c7c0d2;line-height:1.5}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:18px}
+.stat{background:#ffffff0b;border:1px solid #ffffff13;border-radius:13px;padding:10px}
+.stat b{display:block;font-size:17px}
+.stat span{color:var(--muted);font-size:10px}
+.tabs{display:flex;gap:8px;overflow:auto;padding:4px 0 14px}
+.tab{white-space:nowrap;border:1px solid var(--line);background:var(--panel);color:var(--muted);border-radius:99px;padding:10px 14px;font-weight:650}
+.tab.active{background:#38264d;border-color:#8c64c9;color:white}
+.section{display:none}
+.section.active{display:block}
+.card{background:linear-gradient(160deg,#191923,#121219);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px}
+.card h3{margin:0 0 13px;font-size:16px}
+.muted{color:var(--muted)}
+label{display:block;color:#c9c4d2;font-size:12px;font-weight:650;margin:12px 0 6px}
+input,textarea,select{width:100%;background:#0d0d13;color:var(--text);border:1px solid #343444;border-radius:12px;padding:12px;font:inherit;outline:none}
+textarea{min-height:100px;resize:vertical;line-height:1.45}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{border:0;border-radius:12px;padding:12px 15px;background:linear-gradient(100deg,#ff963f,#b56aff);color:#160f20;font-weight:800;font-size:14px}
+.btn.secondary{background:#292938;color:#eee;border:1px solid #414153}
+.btn.danger{background:#3a2028;color:#ffb4bd}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+.character{display:flex;gap:12px;align-items:center;padding:12px;background:#ffffff08;border:1px solid var(--line);border-radius:14px;margin:8px 0}
+.avatar{width:52px;height:52px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,#48305c,#1b253d);font-size:25px;flex-shrink:0}
+.character strong{display:block}
+.character small{color:var(--muted);display:block;margin-top:4px;line-height:1.35}
+.character button{margin-left:auto}
+.preview{min-height:190px;border:1px dashed #5a4a70;border-radius:16px;background:radial-gradient(circle at 50% 40%,#39264b,#15131d 60%,#0d0d13);display:grid;place-items:center;text-align:center;padding:20px}
+.preview .orb{font-size:42px}
+.preview p{color:#c9c1d4;max-width:300px;line-height:1.5;margin:8px auto}
+.promptout{white-space:pre-wrap;background:#0b0b11;border:1px solid #343444;border-radius:13px;padding:13px;color:#ddd5e8;font-size:13px;line-height:1.5;max-height:280px;overflow:auto}
+.notice{font-size:12px;color:#c7bdd3;line-height:1.5;background:#221d2d;border-radius:12px;padding:11px}
+.empty{padding:18px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:14px}
+nav.bottom{position:fixed;bottom:0;left:0;right:0;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:#101018f2;border-top:1px solid var(--line);display:flex;justify-content:space-around;z-index:6}
+.bottom span{font-size:11px;color:var(--muted);text-align:center}
+.bottom b{display:block;font-size:19px;margin-bottom:3px;color:#e9d8ff}
+footer{text-align:center;color:#777284;font-size:11px;padding:14px}
+@media(min-width:650px){main{padding:24px}.hero{padding:28px}.hero h2{font-size:34px}}
+</style>
+</head>
+<body>
+<header>
+<div class="brand">
+<div class="mark">✦</div>
+<div><h1>CINEVERSE</h1><small>ANIME STUDIO · PROTOTYPE 0.1</small></div>
+</div>
+</header>
+<main>
+<div class="hero">
+<div class="eyebrow">YOUR ORIGINAL ANIME WORKSPACE</div>
+<h2>Build worlds.<br>Bring characters to life.</h2>
+<p>A mobile-first workspace for planning cinematic 3D anime scenes. Create characters, build prompts and organise episodes.</p>
+<div class="stats">
+<div class="stat"><b id="charCount">2</b><span>CHARACTERS</span></div>
+<div class="stat"><b id="sceneCount">0</b><span>SCENES SAVED</span></div>
+<div class="stat"><b>0.1</b><span>VERSION</span></div>
+</div>
+</div>
+<div class="tabs">
+<button class="tab active" data-tab="dashboard">Studio</button>
+<button class="tab" data-tab="characters">Characters</button>
+<button class="tab" data-tab="builder">Scene Builder</button>
+<button class="tab" data-tab="library">My Scenes</button>
+</div>
+<section id="dashboard" class="section active">
+<div class="card">
+<h3>Quick start</h3>
+<p class="muted">Start with a character, describe a scene, then generate a reusable prompt for your video model.</p>
+<div class="btnrow">
+<button class="btn" onclick="showTab('builder')">＋ Create a scene</button>
+<button class="btn secondary" onclick="showTab('characters')">Manage characters</button>
+</div>
+</div>
+<div class="card">
+<h3>Production pipeline</h3>
+<div class="notice">1. Lock character appearance → 2. Write scene action and dialogue → 3. Generate prompt → 4. Send prompt and reference image to a video-generation service → 5. Import finished clip into your editor.</div>
+</div>
+<div class="card">
+<h3>Important</h3>
+<p class="muted">This first prototype builds and stores your production prompts locally. It does not yet generate video or connect to an AI API. We will add a secure generation backend in a later version.</p>
+</div>
+</section>
+<section id="characters" class="section">
+<div class="card"><h3>Character library</h3><div id="characterList"></div></div>
+<div class="card">
+<h3>Add a character</h3>
+<label>Character name</label><input id="newName" placeholder="e.g. Kael">
+<label>Age / role</label><input id="newRole" placeholder="e.g. 19-year-old warrior">
+<label>Visual description</label><textarea id="newLook" placeholder="Hair, eyes, face, outfit, body type, accessories..."></textarea>
+<label>Personality / voice notes</label><input id="newVoice" placeholder="e.g. calm, determined, low voice">
+<button class="btn" style="width:100%;margin-top:14px" onclick="addCharacter()">Save character</button>
+</div>
+</section>
+<section id="builder" class="section">
+<div class="card">
+<h3>Scene builder</h3>
+<label>Scene title</label><input id="sceneTitle" placeholder="e.g. Kael faces the Veil">
+<div class="grid2">
+<div><label>Episode</label><input id="episode" placeholder="Episode 1"></div>
+<div><label>Duration</label><select id="duration"><option>10 seconds</option><option>5 seconds</option><option>8 seconds</option><option>15 seconds</option></select></div>
+</div>
+<label>Character</label><select id="sceneCharacter"></select>
+<label>Visual style</label>
+<select id="style"><option>Cinematic 3D anime</option><option>2D dark fantasy anime</option><option>3D cel-shaded anime</option></select>
+<label>Location / background</label><textarea id="location" placeholder="Describe the environment, time, weather, lighting and atmosphere..."></textarea>
+<label>Action / camera movement</label><textarea id="action" placeholder="Describe exactly what happens, character movement, expression and camera direction..."></textarea>
+<label>Dialogue / speaker</label><textarea id="dialogue" placeholder="MIRA: Kael peeche hato"></textarea>
+<label>Sound / music</label><input id="sound" placeholder="Low ominous strings, wind, distant echoes...">
+<label>Extra continuity notes</label><textarea id="continuity" placeholder="Keep face, hairstyle, outfit, proportions and accessories identical to the reference..."></textarea>
+<div class="btnrow">
+<button class="btn" onclick="buildPrompt()">Build prompt</button>
+<button class="btn secondary" onclick="saveScene()">Save scene</button>
+</div>
+</div>
+<div class="card">
+<h3>Scene preview</h3>
+<div class="preview" id="preview">
+<div><div class="orb">✦</div><strong>Your scene will appear here</strong><p>Prompt preview only. Video rendering will be connected in a future version.</p></div>
+</div>
+<label>Generated production prompt</label>
+<div class="promptout" id="promptOutput">Fill in your scene details and tap “Build prompt”.</div>
+<div class="btnrow"><button class="btn" onclick="copyPrompt()">Copy prompt</button></div>
+</div>
+</section>
+<section id="library" class="section">
+<div class="card"><h3>Saved scenes</h3><div id="sceneList"></div></div>
+</section>
+<footer>CineVerse Anime Studio · Prototype 0.1 · Your ideas, your universe.</footer>
+</main>
+<nav class="bottom">
+<span onclick="showTab('dashboard')"><b>⌂</b>Studio</span>
+<span onclick="showTab('characters')"><b>♙</b>Cast</span>
+<span onclick="showTab('builder')"><b>✧</b>Create</span>
+<span onclick="showTab('library')"><b>▤</b>Scenes</span>
+</nav>
+<script>
+const starter=[
+{id:1,name:"Kael",role:"19-year-old warrior",look:"Messy silver-black hair, amber eyes, scar above left eyebrow, lean build, charcoal-black long coat with silver crescent clasp, dark trousers, worn black boots, dark-steel sword with a thin violet glow.",voice:"Calm, determined, intense when using Shadowbreath"},
+{id:2,name:"Mira",role:"18-year-old wanderer",look:"Long auburn hair, teal eyes, deep-teal cloak, weathered map, brass compass glowing teal.",voice:"Alert, brave, warm and protective"}
+];
+let characters=JSON.parse(localStorage.getItem("cv_characters")||"null")||starter;
+let scenes=JSON.parse(localStorage.getItem("cv_scenes")||"[]");
+let currentPrompt="";
+function persist(){localStorage.setItem("cv_characters",JSON.stringify(characters));localStorage.setItem("cv_scenes",JSON.stringify(scenes));}
+function showTab(id){
+document.querySelectorAll(".section").forEach(x=>x.classList.toggle("active",x.id===id));
+document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.tab===id));
+if(id==="characters")renderCharacters();
+if(id==="builder")fillCharacterSelect();
+if(id==="library")renderScenes();
+window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>showTab(b.dataset.tab)));
+function renderCounts(){
+document.getElementById("charCount").textContent=characters.length;
+document.getElementById("sceneCount").textContent=scenes.length;
+}
+function renderCharacters(){
+let el=document.getElementById("characterList");
+el.innerHTML="";
+if(!characters.length){el.innerHTML='<div class="empty">No characters yet. Add your first character below.</div>';return;}
+characters.forEach(c=>{
+let d=document.createElement("div");
+d.className="character";
+d.innerHTML=`<div class="avatar">✦</div><div><strong>${esc(c.name)}</strong><small>${esc(c.role)}<br>${esc(c.look)}</small></div><button class="btn danger" onclick="deleteCharacter(${c.id})">Delete</button>`;
+el.appendChild(d);
+});
+fillCharacterSelect();
+}
+function fillCharacterSelect(){
+let s=document.getElementById("sceneCharacter");
+let old=s.value;
+s.innerHTML=characters.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join("");
+if(old)s.value=old;
+}
+function addCharacter(){
+let name=document.getElementById("newName").value.trim();
+let role=document.getElementById("newRole").value.trim();
+let look=document.getElementById("newLook").value.trim();
+let voice=document.getElementById("newVoice").value.trim();
+if(!name||!look){alert("Please add at least a character name and visual description.");return;}
+characters.push({id:Date.now(),name,role,look,voice});
+persist();
+["newName","newRole","newLook","newVoice"].forEach(id=>document.getElementById(id).value="");
+renderCharacters();renderCounts();
+alert("Character saved on this device.");
+}
+function deleteCharacter(id){
+if(!confirm("Delete this character?"))return;
+characters=characters.filter(c=>c.id!==id);
+persist();renderCharacters();renderCounts();
+}
+function esc(s){
+return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+}
+function buildPrompt(){
+let c=characters.find(x=>x.id==document.getElementById("sceneCharacter").value);
+let title=document.getElementById("sceneTitle").value.trim()||"Untitled scene";
+let ep=document.getElementById("episode").value.trim()||"Unassigned episode";
+let duration=document.getElementById("duration").value;
+let style=document.getElementById("style").value;
+let location=document.getElementById("location").value.trim();
+let action=document.getElementById("action").value.trim();
+let dialogue=document.getElementById("dialogue").value.trim();
+let sound=document.getElementById("sound").value.trim();
+let continuity=document.getElementById("continuity").value.trim();
+currentPrompt=`CINEVERSE ANIME STUDIO — PRODUCTION PROMPT
+${ep} | ${title} | ${duration}
+
+VISUAL STYLE
+${style}. High-quality cinematic composition, polished anime rendering, expressive character acting, coherent motion and detailed environments.
+
+CHARACTER LOCK
+${c?c.name+" — "+c.role+". "+c.look+" Personality / voice: "+c.voice:"No character selected."}
+
+LOCATION AND BACKGROUND
+${location||"Specify the complete environment, lighting, weather and atmosphere."}
+
+ACTION AND CAMERA
+${action||"Specify the character action, facial expression, movement and camera movement."}
+
+DIALOGUE
+${dialogue||"No dialogue."}
+
+SOUND DESIGN
+${sound||"Use suitable environmental sound and cinematic background score."}
+
+CONTINUITY AND NEGATIVE INSTRUCTIONS
+${continuity||"Keep the character's face, hair, outfit, body proportions and accessories consistent with the reference image. No unintended character redesign, no extra limbs, no flicker, no sudden costume changes, no random text, no subtitles unless requested."}
+
+OUTPUT
+Create exactly one ${duration} scene. Preserve screen direction and visual continuity. Do not add unrequested characters or dialogue.`;
+document.getElementById("promptOutput").textContent=currentPrompt;
+document.getElementById("preview").innerHTML=`<div><div class="orb">✦</div><strong>${esc(title)}</strong><p>${esc(style)} · ${esc(duration)}<br>${esc(location.slice(0,150)||"Add a location description for a richer scene.")}</p><span class="muted">Prompt preview · video rendering not connected</span></div>`;
+}
+function copyPrompt(){
+if(!currentPrompt)buildPrompt();
+if(navigator.clipboard&&navigator.clipboard.writeText){
+navigator.clipboard.writeText(currentPrompt).then(()=>alert("Prompt copied. Paste it into your video-generation tool.")).catch(()=>fallbackCopy());
+}else fallbackCopy();
+}
+function fallbackCopy(){
+let t=document.createElement("textarea");
+t.value=currentPrompt;document.body.appendChild(t);t.select();document.execCommand("copy");t.remove();
+alert("Prompt copied. Paste it into your video-generation tool.");
+}
+function saveScene(){
+if(!currentPrompt)buildPrompt();
+let title=document.getElementById("sceneTitle").value.trim()||"Untitled scene";
+scenes.unshift({id:Date.now(),title,episode:document.getElementById("episode").value||"Unassigned episode",prompt:currentPrompt,date:new Date().toLocaleDateString()});
+persist();renderCounts();alert("Scene saved on this device.");
+}
+function renderScenes(){
+let el=document.getElementById("sceneList");
+el.innerHTML="";
+if(!scenes.length){el.innerHTML='<div class="empty">No saved scenes yet. Build and save your first scene.</div>';return;}
+scenes.forEach(s=>{
+let d=document.createElement("div");d.className="card";
+d.innerHTML=`<strong>${esc(s.title)}</strong><p class="muted">${esc(s.episode)} · ${esc(s.date)}</p><div class="btnrow"><button class="btn secondary" onclick="loadScene(${s.id})">View prompt</button><button class="btn danger" onclick="deleteScene(${s.id})">Delete</button></div>`;
+el.appendChild(d);
+});
+}
+function loadScene(id){
+let s=scenes.find(x=>x.id===id);if(!s)return;
+currentPrompt=s.prompt;showTab("builder");
+document.getElementById("sceneTitle").value=s.title;
+document.getElementById("episode").value=s.episode;
+document.getElementById("promptOutput").textContent=s.prompt;
+document.getElementById("preview").innerHTML=`<div><div class="orb">✦</div><strong>${esc(s.title)}</strong><p>Saved prompt loaded.</p></div>`;
+}
+function deleteScene(id){
+if(!confirm("Delete this saved scene?"))return;
+scenes=scenes.filter(x=>x.id!==id);
+persist();renderScenes();renderCounts();
+}
+renderCharacters();renderCounts();fillCharacterSelect();
+</script>
+</body>
+</html>
