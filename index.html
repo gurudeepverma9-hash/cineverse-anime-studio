@@ -420,6 +420,8 @@ window.cv3dReset = () => frameModel(currentModel);
 window.cv3dToggleRotate = () => {
   autoRotate = !autoRotate;
   controls.autoRotate = autoRotate;
+  controls.autoRotateSpeed = 3.0;
+  console.log("Auto Rotate:", autoRotate);
 };
 
 const loader = new GLTFLoader();
