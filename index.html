@@ -111,6 +111,19 @@ footer{text-align:center;color:#777284;font-size:11px;padding:14px}
 <button class="btn" style="width:100%;margin-top:14px" onclick="addCharacter()">Save character</button>
 </div>
 </section>
+  <div class="card">
+<h3>Interactive 3D Workspace</h3>
+<p class="muted">Rotate, zoom and preview 3D characters.</p>
+<div id="cv3dViewport" style="height:320px;border:1px solid #514365;border-radius:16px;overflow:hidden;background:#111018;">
+<div id="cv3dLoading" style="padding:30px;text-align:center">Loading 3D...</div>
+</div>
+<div class="btnrow">
+<button class="btn secondary" onclick="document.getElementById('cvModelUpload').click()">Import 3D Model</button>
+<button class="btn secondary" onclick="window.cv3dReset?.()">Reset Camera</button>
+<button class="btn secondary" onclick="window.cv3dToggleRotate?.()">Auto Rotate</button>
+</div>
+<input id="cvModelUpload" type="file" accept=".glb,.gltf" style="display:none">
+</div>
 <section id="builder" class="section">
 <div class="card">
 <h3>Scene builder</h3>
@@ -294,6 +307,178 @@ scenes=scenes.filter(x=>x.id!==id);
 persist();renderScenes();renderCounts();
 }
 renderCharacters();renderCounts();fillCharacterSelect();
+</script>
+  <script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+
+const host = document.getElementById("cv3dViewport");
+if (!host) throw new Error("3D viewport missing");
+
+const loading = document.getElementById("cv3dLoading");
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x11101a);
+
+const camera = new THREE.PerspectiveCamera(
+  45, host.clientWidth / host.clientHeight, 0.1, 1000
+);
+camera.position.set(4, 3, 5);
+
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(host.clientWidth, host.clientHeight);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+host.appendChild(renderer.domElement);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.autoRotate = true;
+
+scene.add(new THREE.HemisphereLight(0xffffff, 0x302040, 2));
+
+const light = new THREE.DirectionalLight(0xffffff, 3);
+light.position.set(4, 7, 5);
+scene.add(light);
+
+const floor = new THREE.Mesh(
+  new THREE.CircleGeometry(4, 48),
+  new THREE.MeshStandardMaterial({color:0x282035})
+);
+floor.rotation.x = -Math.PI/2;
+floor.position.y = -0.1;
+scene.add(floor);
+
+// Temporary 3D character placeholder
+const character = new THREE.Group();
+
+const body = new THREE.Mesh(
+  new THREE.CapsuleGeometry(0.4, 1, 6, 12),
+  new THREE.MeshStandardMaterial({color:0x9270c5})
+);
+body.position.y = 1.4;
+character.add(body);
+
+const head = new THREE.Mesh(
+  new THREE.SphereGeometry(0.32, 24, 24),
+  new THREE.MeshStandardMaterial({color:0xc99b83})
+);
+head.position.y = 2.4;
+character.add(head);
+
+const hair = new THREE.Mesh(
+  new THREE.SphereGeometry(0.35, 20, 20),
+  new THREE.MeshStandardMaterial({color:0x292538})
+);
+hair.position.y = 2.62;
+hair.scale.set(1,0.65,1);
+character.add(hair);
+
+for (const side of [-1,1]) {
+  const leg = new THREE.Mesh(
+    new THREE.CapsuleGeometry(0.15,0.75,5,10),
+    new THREE.MeshStandardMaterial({color:0x292538})
+  );
+  leg.position.set(side*0.2,0.45,0);
+  character.add(leg);
+}
+
+scene.add(character);
+
+let currentModel = character;
+let autoRotate = true;
+let mixer = null;
+const clock = new THREE.Clock();
+
+function frameModel(model) {
+  const box = new THREE.Box3().setFromObject(model);
+  const size = box.getSize(new THREE.Vector3());
+  const center = box.getCenter(new THREE.Vector3());
+  controls.target.copy(center);
+
+  const distance = Math.max(size.x,size.y,size.z)*2.5 || 4;
+  camera.position.set(
+    center.x+distance,
+    center.y+distance*0.5,
+    center.z+distance
+  );
+  controls.update();
+}
+
+window.cv3dReset = () => frameModel(currentModel);
+
+window.cv3dToggleRotate = () => {
+  autoRotate = !autoRotate;
+  controls.autoRotate = autoRotate;
+};
+
+const loader = new GLTFLoader();
+
+document.getElementById("cvModelUpload")
+.addEventListener("change", event => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const url = URL.createObjectURL(file);
+
+  loader.load(url, gltf => {
+    scene.remove(currentModel);
+    currentModel = gltf.scene;
+    scene.add(currentModel);
+
+    if (mixer) mixer.stopAllAction();
+    mixer = gltf.animations.length
+      ? new THREE.AnimationMixer(currentModel)
+      : null;
+
+    if (mixer) {
+      gltf.animations.forEach(clip =>
+        mixer.clipAction(clip).play()
+      );
+    }
+
+    frameModel(currentModel);
+    URL.revokeObjectURL(url);
+  }, undefined, error => {
+    console.error(error);
+    alert("3D model could not load. Try a valid GLB file.");
+    URL.revokeObjectURL(url);
+  });
+
+  event.target.value = "";
+});
+
+function animate() {
+  requestAnimationFrame(animate);
+  const delta = clock.getDelta();
+  if (mixer) mixer.update(delta);
+  controls.update();
+  renderer.render(scene,camera);
+}
+
+animate();
+
+new ResizeObserver(() => {
+  const w = host.clientWidth;
+  const h = host.clientHeight;
+  if (!w || !h) return;
+
+  camera.aspect = w/h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w,h);
+}).observe(host);
+
+loading.style.display = "none";
 </script>
 </body>
 </html>
